@@ -1,0 +1,13 @@
+<resources>
+
+    <dimen name="game_action_button_height">24dp</dimen>
+    <dimen name="game_action_button_text_size">12sp</dimen>
+	<dimen name="game_action_initiator_text_size">10sp</dimen>
+	<dimen name="cloud_dialog_content_view_length">250dp</dimen>
+	<dimen name="tweet_entry_height">40dp</dimen>
+	<dimen name="twitter_signon_webview_height">280dp</dimen>
+	
+	<dimen name="font_signon_callout_title">@dimen/font_size40</dimen>
+	<dimen name="font_signon_callout_message">@dimen/font_size30</dimen>
+
+</resources>

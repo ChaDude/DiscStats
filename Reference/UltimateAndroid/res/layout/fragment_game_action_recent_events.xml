@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/leftColumn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" >
+
+        <Button
+            android:id="@+id/undoLastEventButton"
+            style="@style/buttonUndo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_action_undo"
+            android:textSize="@dimen/game_action_button_undo_button_size" />
+        
+        <TextView
+            android:id="@+id/autoTweetMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/undoLastEventButton"
+            android:layout_below="@id/undoLastEventButton"
+            android:layout_alignRight="@id/undoLastEventButton"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/label_game_action_auto_tweeting"
+            android:textSize="@dimen/font_size30"
+            android:textStyle="italic"
+            android:textColor="@color/ultimate_theme_color"
+            android:visibility="invisible" />     
+
+        <TextView
+            android:id="@+id/ephemeralMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/undoLastEventButton"
+            android:layout_below="@id/undoLastEventButton"
+            android:layout_alignRight="@id/undoLastEventButton"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/toast_swipe_up_to_see_more"
+            android:textSize="@dimen/font_size40"
+            android:textStyle="italic"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/specialActionButtons"
+        android:layout_toRightOf="@id/leftColumn"
+        android:orientation="vertical" >
+
+        <com.summithillsoftware.ultimate.ui.game.action.RecentEventButton
+            android:id="@+id/event1Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/event2ButtonSeparator"
+            style="@style/horizontal_separator_light" />
+
+        <com.summithillsoftware.ultimate.ui.game.action.RecentEventButton
+            android:id="@+id/event2Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/event3ButtonSeparator"
+            style="@style/horizontal_separator_light" />
+
+        <com.summithillsoftware.ultimate.ui.game.action.RecentEventButton
+            android:id="@+id/event3Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/specialActionButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/timeoutButton"
+            style="@style/buttonGameAction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:text="@string/button_action_timeouts" />
+
+        <Button
+            android:id="@+id/cessationButton"
+            style="@style/buttonGameAction"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:text="@string/button_action_cessation_game_over" />
+    </LinearLayout>
+
+</RelativeLayout>

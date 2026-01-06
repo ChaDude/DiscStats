@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:padding="20dp"
+    android:orientation="vertical" >
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_twitter_auto_tweet"
+        android:layout_marginBottom="20dp"
+        style="@style/tweetSectionHeader"/>    
+
+    <RadioGroup
+        android:id="@+id/tweetRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:orientation="vertical" >
+
+        <RadioButton
+            android:id="@+id/tweetNoneRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/radio_auto_tweet_none"
+            android:textColor="@color/radio_button_text_color"
+            android:layout_marginBottom="20dp"
+            android:textSize="@dimen/form_text_size" />
+
+        <RadioButton
+            android:id="@+id/tweetMinRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/radio_auto_tweet_min"
+            android:textColor="@color/radio_button_text_color"
+            android:layout_marginBottom="20dp"
+            android:textSize="@dimen/form_text_size" />
+
+        <RadioButton
+            android:id="@+id/tweetMaxRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/radio_auto_tweet_max"
+            android:textColor="@color/radio_button_text_color"
+            android:textSize="@dimen/form_text_size" />
+    </RadioGroup>
+
+</LinearLayout>

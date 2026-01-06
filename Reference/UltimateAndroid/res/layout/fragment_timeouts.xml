@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:orientation="vertical"
+    android:padding="6dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp" >
+
+        <ImageButton
+            android:id="@+id/doneButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_description"
+            android:src="@drawable/ic_action_tick_white" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/doneButton"
+            android:layout_alignTop="@+id/doneButton"
+            android:layout_toRightOf="@id/doneButton"
+            android:background="@color/White" />
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/toolbarSeparator"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/White" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:text="@string/label_timeouts_quota"
+        android:textSize="@dimen/font_size60"
+        android:textStyle="bold" />
+
+    <TableLayout
+        android:id="@+id/timeoutQuotas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="12dp" >
+
+        <TableRow
+            android:id="@+id/timeoutPerHalfQuotaRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/FormLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_timeouts_per_half" />
+
+            <Spinner
+                android:id="@+id/timeoutsPerHalfQuotaSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/timeoutFoatersQuotaRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                style="@style/FormLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_timeouts_floaters" />
+
+            <Spinner
+                android:id="@+id/timeoutFloatersQuotaSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/timeoutsTakenLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:text="@string/label_timeouts_taken"
+        android:textSize="@dimen/font_size60"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:id="@+id/timeoutsTakenView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="12dp"
+        android:orientation="horizontal" >
+
+        <TextView
+            style="@style/FormLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_timeouts_first_half" />
+
+        <TextView
+            android:id="@+id/timeoutsTakenFirstHalfTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="@string/zero"
+            android:textStyle="bold"
+            android:textSize="@dimen/font_size50" />
+
+        <TextView
+            android:id="@+id/timeoutsTakenSecondHalfLabel"
+            style="@style/FormLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:text="@string/label_timeouts_second_half" />
+
+        <TextView
+            android:id="@+id/timeoutsTakenSecondHalfTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:text="@string/zero"
+            android:textStyle="bold"
+            android:textSize="@dimen/font_size50" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/actionView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <View
+            android:id="@+id/horizontalSeparator"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_margin="12dp"
+            android:background="@color/ultimate_form_label" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_timeouts_available"
+                android:textSize="@dimen/font_size60"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/timeoutsAvailableTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="@string/zero"
+                android:textSize="@dimen/font_size60"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="14dp"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/takeTimeoutButton"
+                style="@style/standardButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/button_timeouts_take_timeout"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/undoTimeoutButton"
+                style="@style/buttonUndo"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/button_timeouts_undo" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

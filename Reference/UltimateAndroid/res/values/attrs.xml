@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 
+    <declare-styleable name="PlayerLineState">
+        <attr name="state_changed" format="boolean"/>
+		<attr name="playing_time_factor0" format="boolean"/>        
+        <attr name="playing_time_factor1" format="boolean"/>
+        <attr name="playing_time_factor2" format="boolean"/>
+        <attr name="playing_time_factor3" format="boolean"/>
+        <attr name="playing_time_factor4" format="boolean"/>
+    </declare-styleable>
+ 
+</resources>

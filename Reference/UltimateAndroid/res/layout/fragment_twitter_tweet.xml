@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageButton
+            android:id="@+id/clearButton"
+            android:layout_width="@dimen/tweet_clear_button_dimension"
+            android:layout_height="@dimen/tweet_clear_button_dimension"
+            android:layout_alignParentLeft="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/image_description"
+            android:enabled="false"
+            android:scaleType="fitCenter"
+            android:src="@drawable/cancel_button" />
+
+        <TextView
+            android:id="@+id/tweetCharacterCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/undefined"
+            android:textSize="@dimen/tweet_text_size" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tweet_entry_height"
+        android:background="@drawable/tweet_entry_background"
+        android:padding="10dp" >
+
+        <EditText
+            android:id="@+id/tweetText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/transparent_black_hex_1"
+            android:inputType="textMultiLine"
+            android:maxLength="140"
+            android:textSize="@dimen/tweet_text_size" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/tweetedMessage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            android:text="@string/toast_tweet_sent"
+            android:gravity="center"
+            android:textColor="@color/ultimate_theme_color"/>
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/tweetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:enabled="true"
+        android:text="@string/button_tweet_send" />
+
+</LinearLayout>

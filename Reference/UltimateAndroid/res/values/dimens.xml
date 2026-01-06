@@ -1,0 +1,53 @@
+<resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">14dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    
+    <dimen name="line_toolbar_button_margin">6dp</dimen>
+    <dimen name="form_text_size">16sp</dimen>
+	<dimen name="standard_button_text_size">14sp</dimen>
+    <dimen name="game_action_button_text_size">12sp</dimen>
+    <dimen name="game_action_initiator_text_size">14sp</dimen>
+    <dimen name="game_action_button_height">34dp</dimen>
+    <dimen name="game_action_button_margin">2dp</dimen>
+    <dimen name="game_action_recent_event_text_size">14sp</dimen>
+    <dimen name="game_action_portrait_recents_seperator_space">6sp</dimen>
+	<dimen name="game_action_initiator_instructions_text_size">14sp</dimen>
+	<dimen name="game_action_button_undo_button_size">14sp</dimen>
+	<dimen name="game_action_pull_buttons_height">38dp</dimen>
+	<dimen name="event_player_list_width">120dp</dimen>
+	<dimen name="event_player_list_font_size">16sp</dimen>
+	<dimen name="event_player_list_show_all_font_size">14sp</dimen>	
+	<dimen name="event_player_list_width">120dp</dimen>
+	<dimen name="event_player_check_icon_dimension">20dp</dimen>
+	<dimen name="cloud_dialog_content_view_length">410dp</dimen>	
+	<dimen name="instructions_text_size">10sp</dimen>
+	<dimen name="tweet_entry_height">70dp</dimen>
+	<dimen name="tweet_text_size">14sp</dimen>
+	<dimen name="tweet_clear_button_dimension">18dp</dimen>
+	<dimen name="twitter_signon_webview_height">600dp</dimen>
+	<dimen name="wind_direction_view_height">120dp</dimen>
+	<dimen name="date_time_picker_height">160dp</dimen>
+	<dimen name="wind_landscape_section_margin">10dp</dimen>
+
+	
+	<dimen name="font_size_callouts">18dp</dimen>
+	<dimen name="font_size_callouts_extra_small">14dp</dimen>
+	<dimen name="font_size_callouts_small">16dp</dimen>
+	<dimen name="font_size_callouts_large">20dp</dimen>
+	
+	<dimen name="font_signon_callout_title">@dimen/font_size60</dimen>
+	<dimen name="font_signon_callout_message">@dimen/font_size50</dimen>
+	
+	<dimen name="font_size10">8sp</dimen>
+	<dimen name="font_size20">10sp</dimen>
+	<dimen name="font_size30">12sp</dimen>
+	<dimen name="font_size40">14sp</dimen>
+	<dimen name="font_size50">16sp</dimen>
+	<dimen name="font_size60">18sp</dimen>
+	<dimen name="font_size70">20sp</dimen>
+	<dimen name="font_size80">22sp</dimen>
+	
+
+</resources>

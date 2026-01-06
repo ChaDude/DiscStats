@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ultimate="http://schemas.android.com/apk/res-auto" >
+
+    <item
+        android:id="@+id/action_twitter"
+        android:icon="@drawable/ic_action_twitter"
+        android:orderInCategory="10"
+        android:title="@string/menuitem_twitter"
+        ultimate:showAsAction="always|withText"/>    
+    <item
+        android:id="@+id/action_line"
+        android:icon="@drawable/ic_action_users"
+        android:orderInCategory="20"
+        android:showAsAction="always|withText"
+        android:title="@string/action_line"
+        ultimate:showAsAction="always|withText"/>
+    <item
+        android:id="@+id/action_players"
+        android:icon="@drawable/ic_action_users"
+        android:orderInCategory="55"
+        android:title="@string/menuitem_players"
+        ultimate:showAsAction="never|withText"/>    
+    <item
+        android:id="@+id/action_support"
+        android:orderInCategory="400"
+        android:title="@string/menuitem_support"
+        ultimate:showAsAction="never|withText"/>
+
+</menu>

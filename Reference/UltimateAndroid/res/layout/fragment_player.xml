@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:orientation="vertical" >
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:shrinkColumns="1"
+            android:stretchColumns="1" >
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/label_player_name"
+                    android:textAppearance="@style/FormLabel" />
+
+                <EditText
+                    android:id="@+id/text_player_name"
+                    android:maxLength="8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/placeholder_player_name"
+                    android:inputType="textCapWords|textNoSuggestions"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/form_text_size" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10sp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/label_player_number"
+                    android:textAppearance="@style/FormLabel" />
+
+                <EditText
+                    android:id="@+id/text_player_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/placeholder_player_number"
+                    android:inputType="numberSigned"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/form_text_size" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/label_player_position"
+                    android:textAppearance="@style/FormLabel" />
+
+                <RadioGroup
+                    android:id="@+id/radiogroup_player_position"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <RadioButton
+                        android:id="@+id/radio_player_position_any"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/radio_player_position_any"
+                        android:textColor="@color/radio_button_text_color"
+                        android:textSize="@dimen/form_text_size" />
+
+                    <RadioButton
+                        android:id="@+id/radio_player_position_cutter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/radio_player_position_cutter"
+                        android:textColor="@color/radio_button_text_color"
+                        android:textSize="@dimen/form_text_size" />
+
+                    <RadioButton
+                        android:id="@+id/radio_player_position_handler"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/radio_player_position_handler"
+                        android:textColor="@color/radio_button_text_color"
+                        android:textSize="@dimen/form_text_size" />
+                </RadioGroup>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/label_player_gender"
+                    android:textAppearance="@style/FormLabel" />
+
+                <RadioGroup
+                    android:id="@+id/radiogroup_player_gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <RadioButton
+                        android:id="@+id/radio_player_gender_male"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/radio_player_gender_male"
+                        android:textColor="@color/radio_button_text_color"
+                        android:textSize="@dimen/form_text_size" />
+
+                    <RadioButton
+                        android:id="@+id/radio_player_gender_female"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:text="@string/radio_player_gender_female"
+                        android:textColor="@color/radio_button_text_color"
+                        android:textSize="@dimen/form_text_size" />
+                </RadioGroup>
+            </TableRow>
+            
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/label_player_absent"
+                    android:textAppearance="@style/FormLabel" />
+
+                <CheckBox
+                    android:id="@+id/checkbox_player_absent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </TableRow>            
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp" >
+
+            <Button
+                android:id="@+id/button_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="saveClicked"
+                android:text="@string/button_save" />
+
+            <Button
+                android:id="@+id/button_save_and_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="saveAndAddClicked"
+                android:text="@string/button_save_and_add" />
+
+            <Button
+                android:id="@+id/button_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="cancelClicked"
+                android:text="@string/button_cancel" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

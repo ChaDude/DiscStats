@@ -1,0 +1,19 @@
+<resources>
+    
+	<dimen name="form_text_size">18sp</dimen>
+    <dimen name="standard_button_text_size">16sp</dimen>
+    <dimen name="game_action_button_text_size">16sp</dimen>
+    <dimen name="game_action_initiator_text_size">16sp</dimen>
+    <dimen name="game_action_button_height">44dp</dimen>
+	<dimen name="game_action_portrait_recents_seperator_space">20sp</dimen>
+	<dimen name="game_action_initiator_instructions_text_size">18sp</dimen>
+	<dimen name="game_action_recent_event_text_size">16sp</dimen>
+	<dimen name="game_action_button_undo_button_size">16sp</dimen>
+	<dimen name="game_action_pull_buttons_height">44dp</dimen>
+	<dimen name="cloud_dialog_content_view_length">440dp</dimen>
+	<dimen name="tweet_entry_height">140dp</dimen>
+	<dimen name="instructions_text_size">14sp</dimen>
+	<dimen name="date_time_picker_height">220dp</dimen>
+		    
+</resources>
+

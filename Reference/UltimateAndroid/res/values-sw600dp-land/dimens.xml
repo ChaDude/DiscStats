@@ -1,0 +1,12 @@
+<resources>
+
+	<!-- LANDSCAPE
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    -->
+    <dimen name="game_action_button_height">46dp</dimen>
+    <dimen name="cloud_dialog_content_view_length">420dp</dimen>
+    <dimen name="tweet_entry_height">66dp</dimen> 
+	<dimen name="twitter_signon_webview_height">400dp</dimen>
+
+</resources>
