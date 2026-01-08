@@ -1,6 +1,0 @@
-<resources>
-
-    <dimen name="game_action_button_height">28dp</dimen>
-	<dimen name="cloud_dialog_content_view_length">290dp</dimen>    
-
-</resources>
