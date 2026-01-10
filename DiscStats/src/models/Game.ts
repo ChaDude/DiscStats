@@ -1,9 +1,7 @@
-/**
- * Represents a game in the ultimate frisbee league.
- * Contains basic game information.
- */
+/** Game entity in the DiscStats app */
 export interface Game {
   id: string;
   date: string;
-  // TODO: add more fields as needed
+  team1Id: string;
+  team2Id: string;
 }

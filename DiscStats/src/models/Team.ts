@@ -1,9 +1,7 @@
-/**
- * Represents a team in the ultimate frisbee game.
- * Contains basic team information.
- */
+/** Team entity in the DiscStats app */
 export interface Team {
   id: string;
   name: string;
-  // TODO: add more fields as needed
+  city?: string;
+  captainId?: string;
 }

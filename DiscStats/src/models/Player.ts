@@ -1,9 +1,7 @@
-/**
- * Represents a player in the ultimate frisbee game.
- * Contains basic player information.
- */
+/** Player entity in the DiscStats app */
 export interface Player {
   id: string;
   name: string;
-  // TODO: add more fields as needed
+  number?: number;
+  teamId: string;
 }

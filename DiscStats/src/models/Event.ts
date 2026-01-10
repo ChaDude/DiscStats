@@ -1,9 +1,7 @@
-/**
- * Represents an event in an ultimate frisbee point.
- * Contains basic event information.
- */
+/** Event entity in the DiscStats app */
 export interface Event {
   id: string;
   pointId: string;
-  // TODO: add more fields as needed
+  type: string;
+  playerId: string;
 }
