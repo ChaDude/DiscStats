@@ -1,7 +1,7 @@
-/** Team entity in the DiscStats app */
+/** Defines a team entity, including player references. */
 export interface Team {
-  id: string;
-  name: string;
-  city?: string;
-  captainId?: string;
+  id: string;          // Unique identifier
+  name: string;        // Team name
+  players: string[];   // Array of player IDs (avoids deep nesting)
+  ownerUserId?: string; // For future auth/sharing
 }
