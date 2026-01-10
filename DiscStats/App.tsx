@@ -1,47 +1,44 @@
 // App.tsx
-import { useEffect } from 'react';
-import RootNavigator from './src/navigation/RootNavigator'; // ← keep your real navigation
+/**
+ * Root entry point for DiscStats app.
+ * Currently minimal: only Home screen + temporary stress test on mount.
+ * Navigation is basic until we add more screens.
+ */
+import React, { useEffect } from 'react';
+import { View, Text, Button, StyleSheet } from 'react-native';
 
-// Mock data imports – only for testing
-import {
-  createGame,
-  addPointToGame,
-  addEventToPoint,
-  getGameById,
-  mockPlayers,
-} from './src/services/mockData';
+// Temporary: import and run the stress test
+import { runStressTest } from './src/tests/stressTest';
+
+// Placeholder Home screen (create if missing)
+function HomeScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>DiscStats</Text>
+      <Text style={styles.subtitle}>Game Engine Test Mode</Text>
+      <Text style={styles.info}>Check Metro terminal for stress test results</Text>
+    </View>
+  );
+}
 
 export default function App() {
-  // Temporary test – runs once when app mounts
   useEffect(() => {
-    const runTest = () => {
-      console.log('=== Starting mock data test ===');
+    console.log('App mounted - running game engine stress test...');
+    runStressTest();
+    console.log('Stress test execution complete');
+  }, []);
 
-      const game = createGame('team-us', 'team-opp');
-      console.log('Created game:', game);
-
-      const point = addPointToGame(game.id, 'us');
-      console.log('Added point:', point);
-
-      const puller = mockPlayers[0];
-      addEventToPoint(point, 'pull', puller.id);
-
-      const thrower = mockPlayers[0];
-      const catcher = mockPlayers[1];
-      addEventToPoint(point, 'completion', thrower.id, catcher.id);
-
-      addEventToPoint(point, 'goal', catcher.id);
-
-      const updatedGame = getGameById(game.id);
-      console.log('Final game state:', updatedGame);
-      console.log('Point details:', point);
-
-      console.log('=== Mock data test complete ===');
-    };
-
-    runTest();
-  }, []); // ← important: empty dependency array
-
-  // ← Keep your real app content here!
-  return <RootNavigator />;
+  return (
+    <View style={styles.appContainer}>
+      <HomeScreen />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  appContainer: { flex: 1, backgroundColor: '#fff' },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
+  title: { fontSize: 32, fontWeight: 'bold', marginBottom: 16 },
+  subtitle: { fontSize: 20, marginBottom: 12 },
+  info: { fontSize: 16, color: '#666', textAlign: 'center' },
+});
