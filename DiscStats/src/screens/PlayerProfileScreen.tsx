@@ -1,28 +1,38 @@
 // src/screens/PlayerProfileScreen.tsx
 /**
  * Player profile screen.
- * Displays player details + edit button (reuses modal from TeamDetails).
+ * Displays player details + edit button that triggers edit modal in TeamDetails.
  * Navigated from TeamDetails on player tap.
  */
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'; // ← Added Alert
-import { RouteProp } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import { RootStackParamList } from '../navigation/types';
 import { Player } from '../models';
 
 type PlayerProfileRouteParams = {
   player: Player;
-  teamName: string; // For context
+  teamName: string;
+  teamId: string; // ← Required for passing back
 };
 
 type Props = {
-  route: RouteProp<{ PlayerProfile: PlayerProfileRouteParams }, 'PlayerProfile'>;
+  route: RouteProp<RootStackParamList, 'PlayerProfile'>;
 };
 
 export default function PlayerProfileScreen({ route }: Props) {
-  const { player, teamName } = route.params;
-  const navigation = useNavigation();
+  const { player, teamName, teamId } = route.params;
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const handleEdit = () => {
+    navigation.navigate('TeamDetails', {
+      teamId,
+      teamName,
+      editingPlayerId: player.id // Trigger edit modal
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -43,15 +53,7 @@ export default function PlayerProfileScreen({ route }: Props) {
         <Text style={styles.value}>{teamName}</Text>
       </View>
 
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => {
-          // Navigate back to TeamDetails and trigger edit modal there
-          navigation.goBack();
-          // We'll handle modal trigger in TeamDetails (via params or global state later)
-          Alert.alert('Edit', 'Edit functionality coming soon');
-        }}
-      >
+      <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
         <Text style={styles.editButtonText}>Edit Player</Text>
       </TouchableOpacity>
     </View>

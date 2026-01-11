@@ -1,23 +1,24 @@
 // src/screens/TeamDetailsScreen.tsx
 /**
  * Team details screen.
- * Shows players for a selected team + add player form.
- * Offline-first with DB integration; delete player on long-press.
- * Fully cross-platform (flexbox).
+ * Shows players for a selected team + add/edit player modal.
+ * Delete is nested in edit modal for safety.
+ * Offline-first with DB integration.
  */
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, Alert, Pressable } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Only this import for Picker
+import { Picker } from '@react-native-picker/picker';
 import { RouteProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { getPlayersForTeam, addPlayer, deletePlayer } from '../services/database';
+import { getPlayersForTeam, addPlayer, updatePlayer, deletePlayer } from '../services/database';
 import { Player } from '../models';
 import { RootStackParamList } from '../navigation/types';
 
 type TeamDetailsRouteParams = {
   teamId: string;
   teamName: string;
+  editingPlayerId?: string; // Optional: trigger edit mode
 };
 
 type Props = {
@@ -25,19 +26,27 @@ type Props = {
 };
 
 export default function TeamDetailsScreen({ route }: Props) {
-  const { teamId, teamName } = route.params;
+  const { teamId, teamName, editingPlayerId } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [newPlayerName, setNewPlayerName] = useState('');
   const [newJersey, setNewJersey] = useState('');
   const [newGender, setNewGender] = useState<'male' | 'female' | 'other'>('other');
 
-  // Load players on mount
   useEffect(() => {
     loadPlayers();
-  }, []);
+
+    if (editingPlayerId) {
+      const playerToEdit = players.find(p => p.id === editingPlayerId);
+      if (playerToEdit) {
+        startEdit(playerToEdit);
+      }
+    }
+  }, [editingPlayerId, players]);
 
   const loadPlayers = async () => {
     try {
@@ -48,35 +57,66 @@ export default function TeamDetailsScreen({ route }: Props) {
     }
   };
 
-  const handleAddPlayer = async () => {
+  const startEdit = (player: Player) => {
+    setIsEditing(true);
+    setEditingPlayer(player);
+    setNewPlayerName(player.name);
+    setNewJersey(player.jerseyNumber?.toString() || '');
+    setNewGender(player.gender);
+    setModalVisible(true);
+  };
+
+  const handleSavePlayer = async () => {
     if (!newPlayerName.trim()) {
       Alert.alert('Error', 'Player name is required');
       return;
     }
 
     try {
-      await addPlayer(teamId, newPlayerName.trim(), newJersey ? parseInt(newJersey) : undefined, newGender);
-      setNewPlayerName('');
-      setNewJersey('');
-      setNewGender('other');
-      setModalVisible(false);
-      loadPlayers(); // Refresh list
+      if (isEditing && editingPlayer) {
+        await updatePlayer(editingPlayer.id, {
+          name: newPlayerName.trim(),
+          jerseyNumber: newJersey ? parseInt(newJersey) : undefined,
+          gender: newGender,
+        });
+      } else {
+        await addPlayer(teamId, newPlayerName.trim(), newJersey ? parseInt(newJersey) : undefined, newGender);
+      }
+
+      resetModal();
+      loadPlayers();
     } catch (error) {
-      Alert.alert('Error', 'Failed to add player');
+      Alert.alert('Error', 'Failed to save player');
     }
   };
 
-  const handleDeletePlayer = (playerId: string) => {
-    Alert.alert('Confirm Delete', 'Delete this player?', [
+  const resetModal = () => {
+    setNewPlayerName('');
+    setNewJersey('');
+    setNewGender('other');
+    setIsEditing(false);
+    setEditingPlayer(null);
+    setModalVisible(false);
+  };
+
+  const handleDeletePlayer = () => {
+    if (!editingPlayer) return;
+
+    Alert.alert('Confirm Delete', 'Delete this player? This cannot be undone.', [
       { text: 'Cancel' },
-      { text: 'Delete', style: 'destructive', onPress: async () => {
-        try {
-          await deletePlayer(playerId);
-          loadPlayers(); // Refresh
-        } catch (error) {
-          Alert.alert('Error', 'Failed to delete player');
-        }
-      }}
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await deletePlayer(editingPlayer.id);
+            resetModal();
+            loadPlayers();
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete player');
+          }
+        },
+      },
     ]);
   };
 
@@ -90,8 +130,7 @@ export default function TeamDetailsScreen({ route }: Props) {
         renderItem={({ item }) => (
           <Pressable
             style={styles.playerItem}
-            onPress={() => navigation.navigate('PlayerProfile', { player: item, teamName })}
-            onLongPress={() => handleDeletePlayer(item.id)}
+            onPress={() => navigation.navigate('PlayerProfile', { player: item, teamName, teamId })}
           >
             <Text style={styles.playerName}>{item.name}</Text>
             <Text style={styles.playerDetails}>
@@ -102,16 +141,14 @@ export default function TeamDetailsScreen({ route }: Props) {
         ListEmptyComponent={<Text style={styles.emptyText}>No players yet. Add one!</Text>}
       />
 
-      {/* Floating Add Button */}
-      <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={styles.addButton} onPress={resetModal}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
 
-      {/* Add Player Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>New Player</Text>
+            <Text style={styles.modalTitle}>{isEditing ? 'Edit Player' : 'New Player'}</Text>
             <TextInput
               style={styles.input}
               placeholder="Player Name"
@@ -123,7 +160,7 @@ export default function TeamDetailsScreen({ route }: Props) {
               style={styles.input}
               placeholder="Jersey Number (optional)"
               value={newJersey}
-              onChangeText={setNewJersey}
+              onChangeText={(text) => setNewJersey(text.replace(/[^0-9]/g, ''))}
               keyboardType="numeric"
             />
             <Text style={styles.label}>Gender</Text>
@@ -137,10 +174,15 @@ export default function TeamDetailsScreen({ route }: Props) {
               <Picker.Item label="Other" value="other" />
             </Picker>
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+              <TouchableOpacity style={styles.cancelButton} onPress={resetModal}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.saveButton} onPress={handleAddPlayer}>
+              {isEditing && (
+                <TouchableOpacity style={styles.deleteButton} onPress={handleDeletePlayer}>
+                  <Text style={styles.deleteText}>Delete</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity style={styles.saveButton} onPress={handleSavePlayer}>
                 <Text style={styles.saveText}>Save</Text>
               </TouchableOpacity>
             </View>
@@ -208,9 +250,11 @@ const styles = StyleSheet.create({
   },
   label: { fontSize: 16, color: '#333', marginBottom: 8 },
   picker: { backgroundColor: '#f9f9f9', borderRadius: 8, marginBottom: 16 },
-  modalButtons: { flexDirection: 'row', justifyContent: 'space-between' },
-  cancelButton: { padding: 12, backgroundColor: '#ddd', borderRadius: 8 },
-  cancelText: { color: '#333' },
-  saveButton: { padding: 12, backgroundColor: '#2196F3', borderRadius: 8 },
+  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
+  cancelButton: { flex: 1, padding: 12, backgroundColor: '#ddd', borderRadius: 8, alignItems: 'center' },
+  cancelText: { color: '#333', fontWeight: '600' },
+  deleteButton: { flex: 1, padding: 12, backgroundColor: '#f44336', borderRadius: 8, alignItems: 'center' },
+  deleteText: { color: '#fff', fontWeight: '600' },
+  saveButton: { flex: 1, padding: 12, backgroundColor: '#2196F3', borderRadius: 8, alignItems: 'center' },
   saveText: { color: '#fff', fontWeight: '600' },
 });

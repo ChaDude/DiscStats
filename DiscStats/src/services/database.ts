@@ -173,3 +173,18 @@ export const deletePlayer = async (playerId: string): Promise<void> => {
 export const deleteTeam = async (teamId: string): Promise<void> => {
   await db!.runAsync('DELETE FROM teams WHERE id = ?', [teamId]);
 };
+/** Update an existing player */
+export const updatePlayer = async (
+  playerId: string,
+  updates: Partial<Pick<Player, 'name' | 'jerseyNumber' | 'gender'>>
+): Promise<void> => {
+  const { name, jerseyNumber, gender } = updates;
+  await db!.runAsync(
+    `UPDATE players SET 
+      name = COALESCE(?, name),
+      jerseyNumber = COALESCE(?, jerseyNumber),
+      gender = COALESCE(?, gender)
+    WHERE id = ?`,
+    [name ?? null, jerseyNumber ?? null, gender ?? null, playerId]
+  );
+};
