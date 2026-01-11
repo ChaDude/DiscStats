@@ -8,10 +8,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, Alert, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker'; // Only this import for Picker
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { getPlayersForTeam, addPlayer, deletePlayer } from '../services/database';
 import { Player } from '../models';
+import { RootStackParamList } from '../navigation/types';
 
 type TeamDetailsRouteParams = {
   teamId: string;
@@ -19,11 +21,13 @@ type TeamDetailsRouteParams = {
 };
 
 type Props = {
-  route: RouteProp<{ TeamDetails: TeamDetailsRouteParams }, 'TeamDetails'>;
+  route: RouteProp<RootStackParamList, 'TeamDetails'>;
 };
 
 export default function TeamDetailsScreen({ route }: Props) {
   const { teamId, teamName } = route.params;
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
   const [players, setPlayers] = useState<Player[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [newPlayerName, setNewPlayerName] = useState('');
@@ -98,7 +102,7 @@ export default function TeamDetailsScreen({ route }: Props) {
         ListEmptyComponent={<Text style={styles.emptyText}>No players yet. Add one!</Text>}
       />
 
-      {/* Floating Add Button - simple "+" symbol */}
+      {/* Floating Add Button */}
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
-  addButtonText: { color: '#fff', fontSize: 40, fontWeight: 'bold', lineHeight: 40, textAlign: 'center' }, // Clean alignment
+  addButtonText: { color: '#fff', fontSize: 40, fontWeight: 'bold', lineHeight: 40, textAlign: 'center' },
 
   modalOverlay: {
     flex: 1,

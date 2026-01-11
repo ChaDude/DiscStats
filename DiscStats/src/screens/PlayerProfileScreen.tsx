@@ -5,7 +5,7 @@
  * Navigated from TeamDetails on player tap.
  */
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native'; // ← Added Alert
 import { RouteProp } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 
