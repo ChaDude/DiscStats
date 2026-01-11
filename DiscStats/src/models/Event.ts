@@ -15,7 +15,8 @@ export type EventType =
   | 'contest'    // Dispute on a call
   | 'timeout'    // Team or injury timeout
   | 'injury'     // Stoppage for injury
-  | 'substitution'; // Player swap
+  | 'substitution' // Player swap
+  | 'correction' // Fix to User Input
 
 /** Defines an event in a point, tagged to players. */
 export interface Event {
