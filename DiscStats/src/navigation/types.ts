@@ -7,7 +7,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
   Home: undefined;
-  GameTracker: undefined;
+  TeamsList: undefined; // Teams tab list
+  TeamDetails: { teamId: string; teamName: string }; // Required for type-safe navigate
+  Games: undefined;
+  Stats: undefined;
+  GameTracker: undefined; // For future GameTracker navigation
 };
 
 export type RootStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;

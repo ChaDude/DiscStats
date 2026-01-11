@@ -1,19 +1,30 @@
 // src/navigation/RootNavigator.tsx
 /**
  * Root navigator for the DiscStats app.
- * Uses bottom tabs with Expo vector icons (no native build needed).
+ * Bottom tabs for main sections + stack for team details.
  */
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
+import { RootStackParamList } from './types';
 
 import HomeScreen from '../screens/HomeScreen';
 import TeamsScreen from '../screens/TeamsScreen';
+import TeamDetailsScreen from '../screens/TeamDetailsScreen';
 import GamesScreen from '../screens/GamesScreen';
 import StatsScreen from '../screens/StatsScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const TeamsStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="TeamsList" component={TeamsScreen} options={{ title: 'Teams' }} />
+    <Stack.Screen name="TeamDetails" component={TeamDetailsScreen} options={{ title: 'Team Details' }} />
+  </Stack.Navigator>
+);
 
 const RootNavigator = () => {
   return (
@@ -22,36 +33,22 @@ const RootNavigator = () => {
         initialRouteName="Home"
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName: keyof typeof Ionicons.glyphMap = 'help-circle-outline';
+            let iconName: any = 'help-circle-outline';
 
-            switch (route.name) {
-              case 'Home':
-                iconName = focused ? 'home' : 'home-outline';
-                break;
-              case 'Teams':
-                iconName = focused ? 'people' : 'people-outline';
-                break;
-              case 'Games':
-                iconName = focused ? 'disc' : 'disc-outline'; // ← Best frisbee icon
-                break;
-              case 'Stats':
-                iconName = focused ? 'bar-chart' : 'bar-chart-outline';
-                break;
-            }
+            if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
+            if (route.name === 'Teams') iconName = focused ? 'people' : 'people-outline';
+            if (route.name === 'Games') iconName = focused ? 'disc' : 'disc-outline';
+            if (route.name === 'Stats') iconName = focused ? 'bar-chart' : 'bar-chart-outline';
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: '#fff',
           tabBarInactiveTintColor: '#888',
-          tabBarStyle: {
-            backgroundColor: '#333',
-            borderTopWidth: 0,
-          },
-          tabBarShowLabel: true,
+          tabBarStyle: { backgroundColor: '#333', borderTopWidth: 0 },
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Teams" component={TeamsScreen} />
+        <Tab.Screen name="Teams" component={TeamsStack} options={{ headerShown: false }} />
         <Tab.Screen name="Games" component={GamesScreen} />
         <Tab.Screen name="Stats" component={StatsScreen} />
       </Tab.Navigator>
