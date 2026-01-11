@@ -4,30 +4,29 @@
  * Shows players for a selected team + add/edit player modal.
  * Delete is nested in edit modal for safety.
  * Offline-first with DB integration.
+ * Fully cross-platform (flexbox).
  */
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, Alert, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { RouteProp, useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'; // ← Added useRoute
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { getPlayersForTeam, addPlayer, updatePlayer, deletePlayer } from '../services/database';
 import { Player } from '../models';
 import { RootStackParamList } from '../navigation/types';
 
-type TeamDetailsRouteParams = {
-  teamId: string;
-  teamName: string;
-  editingPlayerId?: string; // Optional: trigger edit mode
-};
-
 type Props = {
   route: RouteProp<RootStackParamList, 'TeamDetails'>;
 };
 
 export default function TeamDetailsScreen({ route }: Props) {
-  const { teamId, teamName, editingPlayerId } = route.params;
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { params } = useRoute<RouteProp<RootStackParamList, 'TeamDetails'>>(); // ← Fresh params
+
+  const teamId = params.teamId;
+  const teamName = params.teamName;
+  const editingPlayerId = params.editingPlayerId;
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -37,16 +36,22 @@ export default function TeamDetailsScreen({ route }: Props) {
   const [newJersey, setNewJersey] = useState('');
   const [newGender, setNewGender] = useState<'male' | 'female' | 'other'>('other');
 
+  // Load players on mount
   useEffect(() => {
     loadPlayers();
+  }, [teamId]);
 
-    if (editingPlayerId) {
+  // Handle edit trigger from PlayerProfile (only once)
+  useEffect(() => {
+    if (editingPlayerId && players.length > 0) {
       const playerToEdit = players.find(p => p.id === editingPlayerId);
       if (playerToEdit) {
         startEdit(playerToEdit);
+        // Clear param to prevent re-trigger
+        navigation.setParams({ editingPlayerId: undefined });
       }
     }
-  }, [editingPlayerId, players]);
+  }, [editingPlayerId, players, navigation]);
 
   const loadPlayers = async () => {
     try {
@@ -84,7 +89,10 @@ export default function TeamDetailsScreen({ route }: Props) {
       }
 
       resetModal();
-      loadPlayers();
+      loadPlayers(); // Refresh list
+      if (isEditing) {
+        navigation.pop(); // Pop PlayerProfile after edit
+      }
     } catch (error) {
       Alert.alert('Error', 'Failed to save player');
     }
@@ -111,7 +119,8 @@ export default function TeamDetailsScreen({ route }: Props) {
           try {
             await deletePlayer(editingPlayer.id);
             resetModal();
-            loadPlayers();
+            loadPlayers(); // Refresh list
+            navigation.pop(); // Pop PlayerProfile after delete
           } catch (error) {
             Alert.alert('Error', 'Failed to delete player');
           }
@@ -141,10 +150,12 @@ export default function TeamDetailsScreen({ route }: Props) {
         ListEmptyComponent={<Text style={styles.emptyText}>No players yet. Add one!</Text>}
       />
 
+      {/* Floating Add Button */}
       <TouchableOpacity style={styles.addButton} onPress={resetModal}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
 
+      {/* Add/Edit Player Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -158,9 +169,19 @@ export default function TeamDetailsScreen({ route }: Props) {
             />
             <TextInput
               style={styles.input}
-              placeholder="Jersey Number (optional)"
+              placeholder="Jersey Number (optional, -999 to 999)"
               value={newJersey}
-              onChangeText={(text) => setNewJersey(text.replace(/[^0-9]/g, ''))}
+              onChangeText={(text) => {
+                const cleaned = text.replace(/[^0-9-]/g, '');
+                if (cleaned === '' || cleaned === '-') {
+                  setNewJersey(cleaned);
+                  return;
+                }
+                const num = parseInt(cleaned);
+                if (num >= -999 && num <= 999) {
+                  setNewJersey(cleaned);
+                }
+              }}
               keyboardType="numeric"
             />
             <Text style={styles.label}>Gender</Text>
