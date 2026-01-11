@@ -188,3 +188,11 @@ export const updatePlayer = async (
     [name ?? null, jerseyNumber ?? null, gender ?? null, playerId]
   );
 };
+/** Get a single player by ID */
+export const getPlayerById = async (id: string): Promise<Player | null> => {
+  const row = await db!.getFirstAsync<Player>(
+    'SELECT * FROM players WHERE id = ?',
+    [id]
+  );
+  return row || null;
+};

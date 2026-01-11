@@ -1,28 +1,17 @@
 // src/screens/TeamDetailsScreen.tsx
-/**
- * Team details screen.
- * Shows players for a selected team + add/edit player modal.
- * Delete is nested in edit modal for safety.
- * Offline-first with DB integration.
- * Fully cross-platform (flexbox).
- */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, Alert, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'; // ← Added useRoute
+import { RouteProp, useNavigation, useRoute, useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { getPlayersForTeam, addPlayer, updatePlayer, deletePlayer } from '../services/database';
 import { Player } from '../models';
 import { RootStackParamList } from '../navigation/types';
 
-type Props = {
-  route: RouteProp<RootStackParamList, 'TeamDetails'>;
-};
-
-export default function TeamDetailsScreen({ route }: Props) {
+export default function TeamDetailsScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { params } = useRoute<RouteProp<RootStackParamList, 'TeamDetails'>>(); // ← Fresh params
+  const { params } = useRoute<RouteProp<RootStackParamList, 'TeamDetails'>>();
 
   const teamId = params.teamId;
   const teamName = params.teamName;
@@ -30,24 +19,27 @@ export default function TeamDetailsScreen({ route }: Props) {
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  
+  // Form State
   const [isEditing, setIsEditing] = useState(false);
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
   const [newPlayerName, setNewPlayerName] = useState('');
   const [newJersey, setNewJersey] = useState('');
   const [newGender, setNewGender] = useState<'male' | 'female' | 'other'>('other');
 
-  // Load players on mount
-  useEffect(() => {
-    loadPlayers();
-  }, [teamId]);
+  // REFRESH: Reload list when screen focuses (e.g. coming back from Profile)
+  useFocusEffect(
+    useCallback(() => {
+      loadPlayers();
+    }, [teamId])
+  );
 
-  // Handle edit trigger from PlayerProfile (only once)
+  // TRIGGER EDIT: Handle param from PlayerProfile
   useEffect(() => {
     if (editingPlayerId && players.length > 0) {
       const playerToEdit = players.find(p => p.id === editingPlayerId);
       if (playerToEdit) {
         startEdit(playerToEdit);
-        // Clear param to prevent re-trigger
         navigation.setParams({ editingPlayerId: undefined });
       }
     }
@@ -66,9 +58,26 @@ export default function TeamDetailsScreen({ route }: Props) {
     setIsEditing(true);
     setEditingPlayer(player);
     setNewPlayerName(player.name);
-    setNewJersey(player.jerseyNumber?.toString() || '');
+    // Convert number to string for input; handle null/undefined
+    setNewJersey(player.jerseyNumber !== undefined && player.jerseyNumber !== null ? player.jerseyNumber.toString() : '');
     setNewGender(player.gender);
     setModalVisible(true);
+  };
+
+  const handleOpenAddModal = () => {
+    setNewPlayerName('');
+    setNewJersey('');
+    setNewGender('other');
+    setIsEditing(false);
+    setEditingPlayer(null);
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    if (isEditing) {
+      navigation.goBack();
+    }
   };
 
   const handleSavePlayer = async () => {
@@ -77,34 +86,29 @@ export default function TeamDetailsScreen({ route }: Props) {
       return;
     }
 
+    // Convert input string to integer (or undefined if empty)
+    // Note: '00' parses to 0, which is correct for INTEGER storage
+    const jerseyInt = newJersey.trim() === '' ? undefined : parseInt(newJersey, 10);
+
     try {
       if (isEditing && editingPlayer) {
         await updatePlayer(editingPlayer.id, {
           name: newPlayerName.trim(),
-          jerseyNumber: newJersey ? parseInt(newJersey) : undefined,
+          jerseyNumber: jerseyInt,
           gender: newGender,
         });
-      } else {
-        await addPlayer(teamId, newPlayerName.trim(), newJersey ? parseInt(newJersey) : undefined, newGender);
-      }
+        
+        setModalVisible(false);
+        navigation.goBack(); // Return to PlayerProfile
 
-      resetModal();
-      loadPlayers(); // Refresh list
-      if (isEditing) {
-        navigation.pop(); // Pop PlayerProfile after edit
+      } else {
+        await addPlayer(teamId, newPlayerName.trim(), jerseyInt, newGender);
+        setModalVisible(false);
+        loadPlayers(); 
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to save player');
     }
-  };
-
-  const resetModal = () => {
-    setNewPlayerName('');
-    setNewJersey('');
-    setNewGender('other');
-    setIsEditing(false);
-    setEditingPlayer(null);
-    setModalVisible(false);
   };
 
   const handleDeletePlayer = () => {
@@ -118,9 +122,8 @@ export default function TeamDetailsScreen({ route }: Props) {
         onPress: async () => {
           try {
             await deletePlayer(editingPlayer.id);
-            resetModal();
-            loadPlayers(); // Refresh list
-            navigation.pop(); // Pop PlayerProfile after delete
+            setModalVisible(false);
+            navigation.pop(2); 
           } catch (error) {
             Alert.alert('Error', 'Failed to delete player');
           }
@@ -142,21 +145,20 @@ export default function TeamDetailsScreen({ route }: Props) {
             onPress={() => navigation.navigate('PlayerProfile', { player: item, teamName, teamId })}
           >
             <Text style={styles.playerName}>{item.name}</Text>
+            {/* FIX: Use ?? instead of || so that "0" is displayed instead of "?" */}
             <Text style={styles.playerDetails}>
-              #{item.jerseyNumber || '?'} • {item.gender}
+              #{item.jerseyNumber ?? '?'} • {item.gender}
             </Text>
           </Pressable>
         )}
         ListEmptyComponent={<Text style={styles.emptyText}>No players yet. Add one!</Text>}
       />
 
-      {/* Floating Add Button */}
-      <TouchableOpacity style={styles.addButton} onPress={resetModal}>
+      <TouchableOpacity style={styles.addButton} onPress={handleOpenAddModal}>
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
 
-      {/* Add/Edit Player Modal */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
+      <Modal visible={modalVisible} animationType="slide" transparent onRequestClose={handleCloseModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>{isEditing ? 'Edit Player' : 'New Player'}</Text>
@@ -167,27 +169,38 @@ export default function TeamDetailsScreen({ route }: Props) {
               onChangeText={setNewPlayerName}
               autoFocus
             />
+            
+            {/* UPDATED JERSEY INPUT */}
             <TextInput
               style={styles.input}
-              placeholder="Jersey Number (optional, -999 to 999)"
+              placeholder="Jersey Number (-999 to 999)"
               value={newJersey}
               onChangeText={(text) => {
-                const cleaned = text.replace(/[^0-9-]/g, '');
-                if (cleaned === '' || cleaned === '-') {
-                  setNewJersey(cleaned);
+                // 1. Regex check: Only digits and optional leading minus.
+                // This prevents "9-9", spaces, or decimal points.
+                if (!/^-?\d*$/.test(text)) {
                   return;
                 }
-                const num = parseInt(cleaned);
-                if (num >= -999 && num <= 999) {
-                  setNewJersey(cleaned);
+
+                // 2. Allow intermediate states (empty or just minus sign)
+                if (text === '' || text === '-') {
+                  setNewJersey(text);
+                  return;
+                }
+
+                // 3. Range check (-999 to 999)
+                const num = parseInt(text, 10);
+                if (!isNaN(num) && num >= -999 && num <= 999) {
+                  setNewJersey(text);
                 }
               }}
-              keyboardType="numeric"
+              keyboardType="numeric" // Use "numbers-and-punctuation" on iOS if negative needed? "numeric" usually supports minus on Android.
             />
+
             <Text style={styles.label}>Gender</Text>
             <Picker
               selectedValue={newGender}
-              onValueChange={(itemValue: 'male' | 'female' | 'other') => setNewGender(itemValue)}
+              onValueChange={(itemValue) => setNewGender(itemValue)}
               style={styles.picker}
             >
               <Picker.Item label="Male" value="male" />
@@ -195,7 +208,7 @@ export default function TeamDetailsScreen({ route }: Props) {
               <Picker.Item label="Other" value="other" />
             </Picker>
             <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.cancelButton} onPress={resetModal}>
+              <TouchableOpacity style={styles.cancelButton} onPress={handleCloseModal}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
               {isEditing && (
@@ -217,61 +230,19 @@ export default function TeamDetailsScreen({ route }: Props) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   title: { fontSize: 32, fontWeight: 'bold', margin: 16, textAlign: 'center' },
-
-  playerItem: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+  playerItem: { padding: 16, borderBottomWidth: 1, borderBottomColor: '#eee', flexDirection: 'row', justifyContent: 'space-between' },
   playerName: { fontSize: 18, fontWeight: '600' },
   playerDetails: { fontSize: 14, color: '#666' },
   emptyText: { textAlign: 'center', marginTop: 40, fontSize: 16, color: '#888' },
-
-  addButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#2196F3',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-  },
-  addButtonText: { color: '#fff', fontSize: 40, fontWeight: 'bold', lineHeight: 40, textAlign: 'center' },
-
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 12,
-    width: '80%',
-  },
+  addButton: { position: 'absolute', bottom: 20, right: 20, backgroundColor: '#2196F3', width: 60, height: 60, borderRadius: 30, justifyContent: 'center', alignItems: 'center', elevation: 5 },
+  addButtonText: { color: '#fff', fontSize: 40, fontWeight: 'bold', lineHeight: 40 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
+  modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 12, width: '80%' },
   modalTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 16 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 16,
-    fontSize: 16,
-  },
+  input: { borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, marginBottom: 16, fontSize: 16 },
   label: { fontSize: 16, color: '#333', marginBottom: 8 },
   picker: { backgroundColor: '#f9f9f9', borderRadius: 8, marginBottom: 16 },
-  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
+  modalButtons: { flexDirection: 'row', gap: 12 },
   cancelButton: { flex: 1, padding: 12, backgroundColor: '#ddd', borderRadius: 8, alignItems: 'center' },
   cancelText: { color: '#333', fontWeight: '600' },
   deleteButton: { flex: 1, padding: 12, backgroundColor: '#f44336', borderRadius: 8, alignItems: 'center' },
