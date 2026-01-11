@@ -13,9 +13,10 @@ import { RootStackParamList } from './types';
 import HomeScreen from '../screens/HomeScreen';
 import TeamsScreen from '../screens/TeamsScreen';
 import TeamDetailsScreen from '../screens/TeamDetailsScreen';
-import PlayerProfileScreen from '../screens/PlayerProfileScreen'; // ← Added missing import
+import PlayerProfileScreen from '../screens/PlayerProfileScreen';
 import GamesScreen from '../screens/GamesScreen';
 import StatsScreen from '../screens/StatsScreen';
+import SettingsScreen from '../screens/SettingsScreen'; // Settings / Preferences tab
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,6 +42,7 @@ const RootNavigator = () => {
             if (route.name === 'Teams') iconName = focused ? 'people' : 'people-outline';
             if (route.name === 'Games') iconName = focused ? 'disc' : 'disc-outline';
             if (route.name === 'Stats') iconName = focused ? 'bar-chart' : 'bar-chart-outline';
+            if (route.name === 'Settings') iconName = focused ? 'settings' : 'settings-outline';
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -53,6 +55,7 @@ const RootNavigator = () => {
         <Tab.Screen name="Teams" component={TeamsStack} options={{ headerShown: false }} />
         <Tab.Screen name="Games" component={GamesScreen} />
         <Tab.Screen name="Stats" component={StatsScreen} />
+        <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

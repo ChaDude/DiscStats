@@ -1,21 +1,25 @@
 // App.tsx
 /**
  * Root entry point for DiscStats app.
- * Initializes SQLite database on mount and renders the main navigation.
- * Keeps everything offline-first with future sync compatibility.
+ * Initializes DB + wraps in ThemeProvider for global light/dark mode.
  */
 import React, { useEffect } from 'react';
 
 import RootNavigator from './src/navigation/RootNavigator';
-import { initDatabase } from './src/services/database'; // Step 3: DB init
+import { initDatabase } from './src/services/database';
+import { ThemeProvider } from './src/context/ThemeContext';
 
 export default function App() {
   useEffect(() => {
-    // Initialize database (schema + defaults) once on app start
+    // Initialize database on mount
     initDatabase()
       .then(() => console.log('Database initialized successfully'))
       .catch(err => console.error('Database init failed:', err));
-  }, []); // Empty deps → runs once on mount
+  }, []);
 
-  return <RootNavigator />;
+  return (
+    <ThemeProvider>
+      <RootNavigator />
+    </ThemeProvider>
+  );
 }
