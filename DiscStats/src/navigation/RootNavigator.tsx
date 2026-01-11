@@ -1,7 +1,7 @@
 // src/navigation/RootNavigator.tsx
 /**
  * Root navigator for the DiscStats app.
- * Bottom tabs for main sections + stack for team details.
+ * Bottom tabs for main sections + stack for team/player details.
  */
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
@@ -13,6 +13,7 @@ import { RootStackParamList } from './types';
 import HomeScreen from '../screens/HomeScreen';
 import TeamsScreen from '../screens/TeamsScreen';
 import TeamDetailsScreen from '../screens/TeamDetailsScreen';
+import PlayerProfileScreen from '../screens/PlayerProfileScreen'; // ← Added missing import
 import GamesScreen from '../screens/GamesScreen';
 import StatsScreen from '../screens/StatsScreen';
 
@@ -23,6 +24,7 @@ const TeamsStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="TeamsList" component={TeamsScreen} options={{ title: 'Teams' }} />
     <Stack.Screen name="TeamDetails" component={TeamDetailsScreen} options={{ title: 'Team Details' }} />
+    <Stack.Screen name="PlayerProfile" component={PlayerProfileScreen} options={{ title: 'Player Profile' }} />
   </Stack.Navigator>
 );
 

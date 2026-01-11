@@ -164,3 +164,12 @@ export const addPlayer = async (
   );
   return id;
 };
+
+/** Delete a player by ID */
+export const deletePlayer = async (playerId: string): Promise<void> => {
+  await db!.runAsync('DELETE FROM players WHERE id = ?', [playerId]);
+};
+/** Delete a team (and cascade delete players) */
+export const deleteTeam = async (teamId: string): Promise<void> => {
+  await db!.runAsync('DELETE FROM teams WHERE id = ?', [teamId]);
+};

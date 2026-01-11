@@ -1,36 +1,50 @@
 // src/screens/TeamsScreen.tsx
 /**
  * Teams tab screen.
- * Lists all teams with player count, add new team modal.
+ * Lists all teams with real player count from DB, add new team modal.
  * Uses database service for offline persistence.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Modal, TextInput, StyleSheet, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons'; // For disc icon (if needed later)
 
-import { getTeams, addTeam } from '../services/database';
+import { getTeams, addTeam, getPlayersForTeam } from '../services/database';
 import { Team } from '../models';
 import { RootStackNavigationProp } from '../navigation/types';
 
 export default function TeamsScreen() {
   const [teams, setTeams] = useState<Team[]>([]);
+  const [playerCounts, setPlayerCounts] = useState<Record<string, number>>({});
   const [modalVisible, setModalVisible] = useState(false);
   const [newTeamName, setNewTeamName] = useState('');
   const navigation = useNavigation<RootStackNavigationProp>();
 
-  // Load teams on mount
-  useEffect(() => {
-    loadTeams();
-  }, []);
-
-  const loadTeams = async () => {
+  const loadTeamsAndCounts = useCallback(async () => {
     try {
       const loadedTeams = await getTeams();
       setTeams(loadedTeams);
+
+      const counts: Record<string, number> = {};
+      for (const team of loadedTeams) {
+        const players = await getPlayersForTeam(team.id);
+        counts[team.id] = players.length;
+      }
+      setPlayerCounts(counts);
     } catch (error) {
       Alert.alert('Error', 'Failed to load teams');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadTeamsAndCounts();
+  }, [loadTeamsAndCounts]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTeamsAndCounts();
+    }, [loadTeamsAndCounts])
+  );
 
   const handleAddTeam = async () => {
     if (!newTeamName.trim()) {
@@ -42,7 +56,7 @@ export default function TeamsScreen() {
       await addTeam(newTeamName.trim());
       setNewTeamName('');
       setModalVisible(false);
-      loadTeams(); // Refresh list
+      loadTeamsAndCounts(); // Refresh list + counts
     } catch (error) {
       Alert.alert('Error', 'Failed to add team');
     }
@@ -52,22 +66,24 @@ export default function TeamsScreen() {
     <View style={styles.container}>
       <FlatList
         data={teams}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.teamItem}
             onPress={() => navigation.navigate('TeamDetails', { teamId: item.id, teamName: item.name })}
           >
             <Text style={styles.teamName}>{item.name}</Text>
-            <Text style={styles.playerCount}>Players: Loading...</Text>
+            <Text style={styles.playerCount}>
+              Players: {playerCounts[item.id] ?? 'Loading...'}
+            </Text>
           </TouchableOpacity>
         )}
         ListEmptyComponent={<Text style={styles.emptyText}>No teams yet. Add one!</Text>}
       />
 
-      {/* Floating Add Button */}
+      {/* Floating Add Button - simple "+" symbol */}
       <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-        <Text style={styles.addButtonText}>+ Add Team</Text>
+        <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
 
       {/* Add Team Modal */}
@@ -127,7 +143,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3,
   },
-  addButtonText: { color: '#fff', fontSize: 30, fontWeight: 'bold' },
+  addButtonText: { color: '#fff', fontSize: 40, fontWeight: 'bold', lineHeight: 40, textAlign: 'center' }, // Adjusted for better alignment
 
   modalOverlay: {
     flex: 1,
