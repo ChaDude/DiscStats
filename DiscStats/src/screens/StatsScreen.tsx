@@ -1,21 +1,20 @@
-// src/screens/StatsScreen.tsx
-/**
- * Stats tab screen - MVP placeholder.
- * Aggregate player/team stats (to be implemented).
- */
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useTheme } from '../context/ThemeContext';
 
 export default function StatsScreen() {
+  const { theme, currentScheme } = useTheme();
+  const isDark = (theme === 'system' ? currentScheme : theme) === 'dark';
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Stats</Text>
-      <Text>Player & team stats overview (coming soon)</Text>
+    <View style={[styles.container, { backgroundColor: isDark ? '#121212' : '#fff' }]}>
+      <Text style={[styles.title, { color: isDark ? '#fff' : '#000' }]}>Stats</Text>
+      <Text style={{ color: isDark ? '#bbb' : '#666' }}>Player & team stats overview (coming soon)</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   title: { fontSize: 32, fontWeight: 'bold', marginBottom: 16 },
 });

@@ -6,7 +6,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { RootStackParamList } from '../navigation/types';
 import { Player } from '../models';
-import { getPlayerById } from '../services/database'; // Ensure this is imported
+import { getPlayerById } from '../services/database'; 
+import { useTheme } from '../context/ThemeContext'; //
 
 type Props = {
   route: RouteProp<RootStackParamList, 'PlayerProfile'>;
@@ -14,30 +15,25 @@ type Props = {
 
 export default function PlayerProfileScreen({ route }: Props) {
   const { player: initialPlayer, teamName, teamId } = route.params;
-  
-  // 1. Store player in state so we can update it locally
   const [player, setPlayer] = useState<Player>(initialPlayer);
-  
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  // 2. Fetch fresh data whenever the screen comes into focus
+  // Theme Hooks
+  const { theme, currentScheme } = useTheme();
+  const isDark = (theme === 'system' ? currentScheme : theme) === 'dark';
+
   useFocusEffect(
     useCallback(() => {
       let isActive = true;
-
       const refreshPlayer = async () => {
         try {
           const freshData = await getPlayerById(initialPlayer.id);
-          if (isActive && freshData) {
-            setPlayer(freshData);
-          }
+          if (isActive && freshData) setPlayer(freshData);
         } catch (error) {
           console.error("Failed to refresh player", error);
         }
       };
-
       refreshPlayer();
-
       return () => { isActive = false; };
     }, [initialPlayer.id])
   );
@@ -50,27 +46,35 @@ export default function PlayerProfileScreen({ route }: Props) {
     });
   };
 
+  const containerStyle = { backgroundColor: isDark ? '#121212' : '#fff' };
+  const textStyle = { color: isDark ? '#fff' : '#000' };
+  const labelStyle = { color: isDark ? '#ddd' : '#333' };
+  const valueStyle = { color: isDark ? '#aaa' : '#666' };
+  const borderStyle = { borderBottomColor: isDark ? '#333' : '#eee' };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{player.name}</Text>
+    <View style={[styles.container, containerStyle]}>
+      <Text style={[styles.title, textStyle]}>{player.name}</Text>
 
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Jersey Number:</Text>
-        {/* FIX: Use ?? so that 0 is displayed correctly instead of 'N/A' */}
-        <Text style={styles.value}>#{player.jerseyNumber ?? 'N/A'}</Text>
+      <View style={[styles.detailRow, borderStyle]}>
+        <Text style={[styles.label, labelStyle]}>Jersey Number:</Text>
+        <Text style={[styles.value, valueStyle]}>#{player.jerseyNumber ?? 'N/A'}</Text>
       </View>
 
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Gender:</Text>
-        <Text style={styles.value}>{player.gender}</Text>
+      <View style={[styles.detailRow, borderStyle]}>
+        <Text style={[styles.label, labelStyle]}>Gender:</Text>
+        <Text style={[styles.value, valueStyle]}>{player.gender}</Text>
       </View>
 
-      <View style={styles.detailRow}>
-        <Text style={styles.label}>Team:</Text>
-        <Text style={styles.value}>{teamName}</Text>
+      <View style={[styles.detailRow, borderStyle]}>
+        <Text style={[styles.label, labelStyle]}>Team:</Text>
+        <Text style={[styles.value, valueStyle]}>{teamName}</Text>
       </View>
 
-      <TouchableOpacity style={styles.editButton} onPress={handleEdit}>
+      <TouchableOpacity 
+        style={[styles.editButton, { backgroundColor: isDark ? '#1e88e5' : '#2196f3' }]} 
+        onPress={handleEdit}
+      >
         <Text style={styles.editButtonText}>Edit Player</Text>
       </TouchableOpacity>
     </View>
@@ -78,14 +82,13 @@ export default function PlayerProfileScreen({ route }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 20 },
+  container: { flex: 1, padding: 20 },
   title: { fontSize: 32, fontWeight: 'bold', textAlign: 'center', marginVertical: 20 },
-  detailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
-  label: { fontSize: 18, fontWeight: '600', color: '#333' },
-  value: { fontSize: 18, color: '#666' },
+  detailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1 },
+  label: { fontSize: 18, fontWeight: '600' },
+  value: { fontSize: 18 },
   editButton: {
     marginTop: 40,
-    backgroundColor: '#2196F3',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
