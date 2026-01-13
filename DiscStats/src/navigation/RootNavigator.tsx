@@ -16,7 +16,6 @@ import TeamDetailsScreen from '../screens/TeamDetailsScreen';
 import PlayerProfileScreen from '../screens/PlayerProfileScreen';
 import GamesScreen from '../screens/GamesScreen';
 import StatsScreen from '../screens/StatsScreen';
-import SettingsScreen from '../screens/SettingsScreen'; // Settings / Preferences tab
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -25,7 +24,13 @@ const TeamsStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="TeamsList" component={TeamsScreen} options={{ title: 'Teams' }} />
     <Stack.Screen name="TeamDetails" component={TeamDetailsScreen} options={{ title: 'Team Details' }} />
-    <Stack.Screen name="PlayerProfile" component={PlayerProfileScreen} options={{ title: 'Player Profile' }} />
+    {/* Use render prop for PlayerProfile to pass route & navigation correctly */}
+    <Stack.Screen
+      name="PlayerProfile"
+      options={{ title: 'Player Profile' }}
+    >
+      {(props) => <PlayerProfileScreen {...props} />}
+    </Stack.Screen>
   </Stack.Navigator>
 );
 
@@ -42,7 +47,6 @@ const RootNavigator = () => {
             if (route.name === 'Teams') iconName = focused ? 'people' : 'people-outline';
             if (route.name === 'Games') iconName = focused ? 'disc' : 'disc-outline';
             if (route.name === 'Stats') iconName = focused ? 'bar-chart' : 'bar-chart-outline';
-            if (route.name === 'Settings') iconName = focused ? 'settings' : 'settings-outline';
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
@@ -55,7 +59,6 @@ const RootNavigator = () => {
         <Tab.Screen name="Teams" component={TeamsStack} options={{ headerShown: false }} />
         <Tab.Screen name="Games" component={GamesScreen} />
         <Tab.Screen name="Stats" component={StatsScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
