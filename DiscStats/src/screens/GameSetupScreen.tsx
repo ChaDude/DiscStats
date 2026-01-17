@@ -58,7 +58,8 @@ export default function GameSetupScreen() {
           : undefined,
         pullingFirst
       });
-      navigation.replace('GameTracker', { gameId });
+      // UPDATED: Use navigate instead of replace to allow going back
+      navigation.navigate('GameTracker', { gameId });
     } catch (e) {
       Alert.alert('Error', 'Failed to create game');
     }
@@ -85,7 +86,7 @@ export default function GameSetupScreen() {
     const majorityVal = Math.ceil(playersPerPoint / 2);
     const minorityVal = Math.floor(playersPerPoint / 2);
     
-    // Dynamic Styles for Segmented Control
+    // Dynamic Styles
     const activeSegmentStyle: ViewStyle = { backgroundColor: '#2196F3' };
     const inactiveSegmentStyle: ViewStyle = { backgroundColor: isDark ? '#333' : '#eee' };
     const activeTextStyle: TextStyle = { color: '#fff' };

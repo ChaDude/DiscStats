@@ -418,3 +418,15 @@ export const deleteLastEvent = async (pointId: string): Promise<void> => {
     await database.runAsync('DELETE FROM events WHERE id = ?', [lastEvent.id]);
   }
 };
+
+/** Deletes a point and all associated events/line data (via cascade). */
+export const deletePoint = async (pointId: string): Promise<void> => {
+  const database = getDb();
+  await database.runAsync('DELETE FROM points WHERE id = ?', [pointId]);
+};
+
+/** Deletes an entire game (used when cancelling setup or deleting from list). */
+export const deleteGame = async (gameId: string): Promise<void> => {
+  const database = getDb();
+  await database.runAsync('DELETE FROM games WHERE id = ?', [gameId]);
+};
