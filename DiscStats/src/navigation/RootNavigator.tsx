@@ -5,25 +5,29 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { RootStackParamList } from './types';
-import { useTheme } from '../context/ThemeContext'; //
+import { useTheme } from '../context/ThemeContext';
 
+// Screens
 import HomeScreen from '../screens/HomeScreen';
 import TeamsScreen from '../screens/TeamsScreen';
 import TeamDetailsScreen from '../screens/TeamDetailsScreen';
 import PlayerProfileScreen from '../screens/PlayerProfileScreen';
 import GamesScreen from '../screens/GamesScreen';
 import StatsScreen from '../screens/StatsScreen';
-import SettingsScreen from '../screens/SettingsScreen'; // Import the Settings Screen
+import SettingsScreen from '../screens/SettingsScreen';
+import GameSetupScreen from '../screens/GameSetupScreen';
+import GameTrackerScreen from '../screens/GameTrackerScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// Helper to get dark mode status
+// Helper to get dark mode status for inline styles
 const useIsDark = () => {
   const { theme, currentScheme } = useTheme();
   return (theme === 'system' ? currentScheme : theme) === 'dark';
 };
 
+// 1. Teams Stack (Nested in Tabs)
 const TeamsStack = () => {
   const isDark = useIsDark();
   return (
@@ -43,42 +47,75 @@ const TeamsStack = () => {
   );
 };
 
+// 2. Main Tab Navigator
+const TabNavigator = () => {
+  const isDark = useIsDark();
+
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
+        headerStyle: { backgroundColor: isDark ? '#121212' : '#fff' },
+        headerTintColor: isDark ? '#fff' : '#000',
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: any = 'help-circle-outline';
+
+          if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
+          if (route.name === 'Teams') iconName = focused ? 'people' : 'people-outline';
+          if (route.name === 'Games') iconName = focused ? 'disc' : 'disc-outline';
+          if (route.name === 'Stats') iconName = focused ? 'bar-chart' : 'bar-chart-outline';
+          if (route.name === 'Settings') iconName = focused ? 'settings' : 'settings-outline';
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: isDark ? '#90caf9' : '#2196f3',
+        tabBarInactiveTintColor: isDark ? '#888' : 'gray',
+        tabBarStyle: { 
+          backgroundColor: isDark ? '#1e1e1e' : '#fff',
+          borderTopColor: isDark ? '#333' : '#eee',
+        },
+      })}
+    >
+      <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+      <Tab.Screen name="Teams" component={TeamsStack} options={{ headerShown: false }} />
+      <Tab.Screen name="Games" component={GamesScreen} />
+      <Tab.Screen name="Stats" component={StatsScreen} />
+      <Tab.Screen name="Settings" component={SettingsScreen} />
+    </Tab.Navigator>
+  );
+};
+
+// 3. Root Stack (Wraps Tabs + Full Screen Modals/Pages)
 const RootNavigator = () => {
   const isDark = useIsDark();
   const navigationTheme = isDark ? DarkTheme : DefaultTheme;
 
   return (
     <NavigationContainer theme={navigationTheme}>
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={({ route }) => ({
-          headerStyle: { backgroundColor: isDark ? '#121212' : '#fff' },
-          headerTintColor: isDark ? '#fff' : '#000',
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName: any = 'help-circle-outline';
-
-            if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
-            if (route.name === 'Teams') iconName = focused ? 'people' : 'people-outline';
-            if (route.name === 'Games') iconName = focused ? 'disc' : 'disc-outline';
-            if (route.name === 'Stats') iconName = focused ? 'bar-chart' : 'bar-chart-outline';
-            if (route.name === 'Settings') iconName = focused ? 'settings' : 'settings-outline';
-
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: isDark ? '#90caf9' : '#2196f3',
-          tabBarInactiveTintColor: isDark ? '#888' : 'gray',
-          tabBarStyle: { 
-            backgroundColor: isDark ? '#1e1e1e' : '#fff',
-            borderTopColor: isDark ? '#333' : '#eee',
-          },
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Tab.Screen name="Teams" component={TeamsStack} options={{ headerShown: false }} />
-        <Tab.Screen name="Games" component={GamesScreen} />
-        <Tab.Screen name="Stats" component={StatsScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
-      </Tab.Navigator>
+      <Stack.Navigator>
+        {/* The Tabs are the main screen */}
+        <Stack.Screen 
+          name="Root" 
+          component={TabNavigator} 
+          options={{ headerShown: false }} 
+        />
+        
+        {/* Game Flow Screens (Sit on top of tabs) */}
+        <Stack.Screen 
+          name="GameSetup" 
+          component={GameSetupScreen} 
+          options={{ 
+            title: 'New Game',
+            headerStyle: { backgroundColor: isDark ? '#121212' : '#fff' },
+            headerTintColor: isDark ? '#fff' : '#000',
+          }} 
+        />
+        <Stack.Screen 
+          name="GameTracker" 
+          component={GameTrackerScreen} 
+          options={{ headerShown: false }} 
+        />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

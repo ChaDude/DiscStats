@@ -38,7 +38,8 @@ export default function HomeScreen() {
           styles.startButton,
           { backgroundColor: isDark ? '#1e88e5' : '#2196f3' }
         ]}
-        onPress={() => navigation.navigate('GameTracker')}
+        // FIX: Navigate to 'GameSetup' (which requires no params) instead of 'GameTracker'
+        onPress={() => navigation.navigate('GameSetup')}
       >
         <Text style={styles.buttonText}>Start New Game</Text>
       </TouchableOpacity>
